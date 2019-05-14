@@ -282,13 +282,30 @@ Longer n-games are more informative, but create larger attribute spaces that are
 
 \end{frame}
 
-\begin{frame}{Slam - package for rare matrices}
+\begin{frame}{slam: Sparse Lightweight Arrays and Matrices}
 
-Counting n-grams creates rare matrices, that are causing dimensional problems. 
+Counting n-grams creates sparse matrices, that are causing dimensional problems. 
 
-To manage them, we use a slam package that can store such large amounts of data. 
+<<echo = FALSE, message=FALSE,warning=FALSE,fig.height=3.6,results='asis'>>=
+library(slam)
+library(xtable)
 
-It is a package designed for rare matrices.
+xtable(do.call(rbind, lapply(10^(1L:4), function(i) {
+  m <- diag(1, i)
+  data.frame(m = i,
+             storage = c("base", "slam"),
+             value = c(format(object.size(m), units = "Mb", digits = 6),
+                       format(object.size(as.simple_triplet_matrix(m)), units = "Mb", digits = 6)))
+}))
+)
+# format(object.size(as.simple_triplet_matrix(diag(1, 500))), units = "Kb")
+
+# format(object.size(diag(1, 10^5)), units = "Mb", digits = 6)
+# Error: cannot allocate vector of size 74.5 Gb
+# 
+# format(object.size(diag(1, 10^6)), units = "Mb", digits = 6)
+# Error: cannot allocate vector of size 7450.6 Gb
+@
 
 \end{frame}
 
@@ -526,6 +543,10 @@ Czy standardowe uproszczone alfabety opracowane dla różnych zagadnień biologi
 \tiny{Burdukiewicz, M., Sobczyk, P., Rödiger, S., Duda-Madej, A., Mackiewicz, P., and Kotulska, M. (2017). Amyloidogenic motifs revealed by n-gram analysis. Scientific Reports 7, 12961}
 
   \end{frame}
+  
+  \begin{frame}{ranger: A Fast Implementation of Random Forests}
+
+\end{frame}
 
 
     \begin{frame}{Standard simplified alphabet}
@@ -1085,28 +1106,24 @@ Models predicting the properties of proteins may be based on precise rules that 
 
 
 \begin{frame}{Acknowledgements}
-Mentors:
+
 \begin{itemize}
 \item Michał Burdukiewicz (Politechnika Warszawska).
+\item Stefan Rödiger (Brandenburg University of Technology Cottbus-Senftenberg).
 \item Paweł Mackiewicz (Uniwersytet Wrocławski).
 \item Małgorzata Kotulska (Politechnika Wrocławska).
-\item Marcin Łukaszewicz (Uniwersytet Wrocławski).
-\item Stefan Rödiger (Brandenburg University of Technology Cottbus-Senftenberg).
-\item Henrik Nielsen (Technical University of Denmark).
-\item Lars Kaderali (University of Greifswald).
-\item Przemysław Gagat (Uniwersytet Wrocławski).
 \item Piotr Sobczyk (Politechnika Wrocławska).
 \end{itemize}
 \end{frame}
 
 
 \begin{frame}{Acknowledgements}
-Finansowanie:
+Funding:
 \begin{itemize}
-\item The National Science Centre (2015/17/N/NZ2/01845 i 2017/24/T/NZ2/00003).
+\item Polish National Science Centre (2015/17/N/NZ2/01845 i 2017/24/T/NZ2/00003).
 \item COST ACTION CA15110 (Harmonising standardisation strategies to increase efficiency and competitiveness of European life-science research).
 \item KNOW Wrocław Center for Biotechnology.
-\item Federal Ministry of Education and Research (InnoProfile-Transfer-Projekt 03IPT611X).
+\item German Federal Ministry of Education and Research (InnoProfile-Transfer-Projekt 03IPT611X).
 \end{itemize}
 
 \end{frame}
