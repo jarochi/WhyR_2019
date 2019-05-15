@@ -291,6 +291,7 @@ Counting n-grams creates sparse matrices, that are causing dimensional problems.
 <<echo = FALSE, message=FALSE,warning=FALSE,fig.height=3.6,results='asis'>>=
 library(slam)
 library(xtable)
+library(ggplot2)
 
 xtable(do.call(rbind, lapply(10^(0L:4), function(i) {
   m <- diag(1, i)
@@ -300,6 +301,25 @@ xtable(do.call(rbind, lapply(10^(0L:4), function(i) {
                        format(object.size(as.simple_triplet_matrix(m)), units = "Mb", digits = 6)))
 }))
 )
+
+p <- do.call(rbind, lapply(10^(0L:4), function(i) {
+  m <- diag(1, i)
+  data.frame(m = i,
+             storage = c("base", "slam"),
+             value = c(format(object.size(m), units = "Mb", digits = 6),
+                       format(object.size(as.simple_triplet_matrix(m)), units = "Mb", digits = 6)))
+}))
+
+conversion <- as.numeric(lapply(p$value, function(i) {gsub(" Mb", "", i)}))
+
+p[["value"]] <- conversion
+p[["m"]] <- as.character(p[["m"]])
+
+p %>% ggplot(aes(x = m, y = value, color = storage)) +
+  geom_point() +
+  geom_line() + 
+  theme_bw()
+
 # format(object.size(as.simple_triplet_matrix(diag(1, 500))), units = "Kb")
 
 # format(object.size(diag(1, 10^5)), units = "Mb", digits = 6)
@@ -538,14 +558,17 @@ genome-wide association study (GWAS). NA values indicate unsuccessful analyses:\
 without disk caching failed because of memory shortage for all mtry values and number of
 CPU cores. \\
 With disk caching, we stopped bigrf after 16 days of computation.}
-
+\btVFill
+\tiny{Marvin N. Wright and Andreas Ziegler. (2017). ranger: A Fast Implementation of Random Forests for High Dimensional Data in C++ and R. Journal of Statistical Software 1, 77}
 \end{frame}
 
     \begin{frame}{ranger: A Fast Implementation of Random Forests}
 
 \begin{figure} 
-\includegraphics[width=0.60\textwidth]{static_figure/rangeR.png}
+\includegraphics[width=0.55\textwidth]{static_figure/rangeR.png}
 \end{figure}
+
+\tiny{Marvin N. Wright and Andreas Ziegler. (2017). ranger: A Fast Implementation of Random Forests for High Dimensional Data in C++ and R. Journal of Statistical Software 1, 77}
 
 \end{frame}
 
@@ -1186,9 +1209,9 @@ Models predicting the properties of proteins may be based on precise rules that 
 
 \begin{itemize}
 \item Michał Burdukiewicz (Politechnika Warszawska).
+\item Małgorzata Kotulska (Politechnika Wrocławska).
 \item Stefan Rödiger (Brandenburg University of Technology Cottbus-Senftenberg).
 \item Paweł Mackiewicz (Uniwersytet Wrocławski).
-\item Małgorzata Kotulska (Politechnika Wrocławska).
 \item Piotr Sobczyk (Politechnika Wrocławska).
 \end{itemize}
 \end{frame}
