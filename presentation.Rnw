@@ -15,7 +15,7 @@
 
 \newcommand{\btVFill}{\vskip0pt plus 1filll}
 
-\title{The Alphabet Of Life: n-gram analysis of proteins}
+\title{AmyloGram: Analysis of proteins in R}
 \date{}
 \author{Jarek Chilimoniuk}
 \institute{Department of Bioinformatics and Genomics, University of Wrocław \\
@@ -158,7 +158,7 @@ melt(dat) %>%
 \end{figure}
 
 % Struktura wyższych rzędów określa funkcję białka.
-Protein quaternary structure determines its function.
+Protein higher order structures determines its function.
 
 \end{frame} 
 
@@ -284,13 +284,15 @@ Longer n-games are more informative, but create larger attribute spaces that are
 
 \begin{frame}{slam: Sparse Lightweight Arrays and Matrices}
 
+% S3, szybsze i wydajniejsze niż matrix
+
 Counting n-grams creates sparse matrices, that are causing dimensional problems. 
 
 <<echo = FALSE, message=FALSE,warning=FALSE,fig.height=3.6,results='asis'>>=
 library(slam)
 library(xtable)
 
-xtable(do.call(rbind, lapply(10^(1L:4), function(i) {
+xtable(do.call(rbind, lapply(10^(0L:4), function(i) {
   m <- diag(1, i)
   data.frame(m = i,
              storage = c("base", "slam"),
@@ -402,7 +404,7 @@ Group & Aminoacids \\
 \end{table}
 
 \begin{columns}
-\begin{column}{0.15\textwidth}
+\begin{column}{0.2\textwidth}
  
 Peptide I: 
 
@@ -452,6 +454,21 @@ Amyloid aggregates (red) around neurons (green). Strittmatter Laboratory, Yale U
 
 \end{frame}  
 
+\begin{frame}{Amyloids}
+
+% Agregaty białek amyloidowe występują w tkankach osób cierpiących na zaburzenia 
+% neurodegeneracyjne, takie jak choroba Alzheimera i Parkinsona, a także wiele innych 
+% schorzeń.
+
+\begin{figure} 
+\includegraphics[width=1.0\textwidth]{static_figure/amyloid_p.png}
+\end{figure}
+
+\footnotesize
+Source: National Institute on Aging (NIA) | National Institutes of Health (NIH)
+
+\end{frame}  
+
   
 \begin{frame}{Amyloid proteins}
 
@@ -489,6 +506,48 @@ AmyloGram: n-gram-based amyloid prediction tool~\citep{burdukiewicz_prediction_2
 \tiny{Burdukiewicz, M., Sobczyk, P., Rödiger, S., Duda-Madej, A., Mackiewicz, P., and Kotulska, M. (2017). Amyloidogenic motifs revealed by n-gram analysis. Scientific Reports 7, 12961}
 
   \end{frame}
+  
+    \begin{frame}{ranger: A Fast Implementation of Random Forests}
+
+
+% A fast implementation of Random Forests, particularly suited for high dimensional data. 
+
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccc}
+  \toprule
+Package & & Runtime [h] & & Memory usage [GB] \\ 
+\toprule
+ & & mtry= & & \\
+ & 5000 & 15,000 & 135,000 & \\
+  \midrule
+randomForest & 101.24 & 116.15 & 248.60 & 39.05 \\ 
+  \rowcolor{white}randomForest (MC) & 32.10 & 53.84 & 110.85 & 105.77  \\ 
+   bigrf & NA & NA & NA & NA \\ 
+  \rowcolor{white}randomForestSRC & 1.27 & 3.16 & 14.55 & 46.82  \\ 
+ Random Jungle & 1.51 & 3.60 & 12.83 & 0.40 \\ 
+  \rowcolor{white}Rborist & NA & NA & NA & >128  \\ 
+ ranger & 0.56 & 1.05 & 4.58 & 11.26 \\ 
+  \rowcolor{white}ranger (save.memory) & 0.93 & 2.39 & 11.15 & 0.24  \\ 
+  ranger (GWAS mode) & 0.23 & 0.51 & 2.32 & 0.23 \\ 
+   \bottomrule
+\end{tabular}
+}
+
+\tiny{Runtime and memory usage for the analysis of a simulated dataset mimicking a
+genome-wide association study (GWAS). NA values indicate unsuccessful analyses:\\ 
+without disk caching failed because of memory shortage for all mtry values and number of
+CPU cores. \\
+With disk caching, we stopped bigrf after 16 days of computation.}
+
+\end{frame}
+
+    \begin{frame}{ranger: A Fast Implementation of Random Forests}
+
+\begin{figure} 
+\includegraphics[width=0.60\textwidth]{static_figure/rangeR.png}
+\end{figure}
+
+\end{frame}
 
 \begin{frame}{Cross-validation}
   <<echo = FALSE, message=FALSE,warning=FALSE,fig.align='center',fig.height=4>>=
@@ -524,15 +583,17 @@ ggplot(subdat, aes(x = len_range, y = AUC_mean)) +
 
 \end{frame}
 
-\begin{frame}{Standardowe uproszczone alfabety}
-Czy standardowe uproszczone alfabety opracowane dla różnych zagadnień biologicznych pomagają lepiej przewidywać amyloidy?
+
+
+\begin{frame}{Standard simplified alphabets}
+Do standard simplified alphabets developed for different biological issues help to improve amyloid prediction?
 \end{frame}
 
 % \begin{frame}{Standardowe uproszczone alfabety}
 % Opublikowano kilka uproszczonych alfabetów, które w założeniu miały służyć do opisywania struktur drugo- i trzeciorzędowych białek~\citep{kosiol_new_2004, melo_accuracy_2006}.
 %   \end{frame}
   
-    \begin{frame}{Standardowe uproszczone alfabety}
+    \begin{frame}{Standard simplified alphabets}
 \vspace{2cm}
 \begin{figure} 
 \includegraphics[width=0.95\textwidth]{static_figure/ngram2.eps}
@@ -543,10 +604,6 @@ Czy standardowe uproszczone alfabety opracowane dla różnych zagadnień biologi
 \tiny{Burdukiewicz, M., Sobczyk, P., Rödiger, S., Duda-Madej, A., Mackiewicz, P., and Kotulska, M. (2017). Amyloidogenic motifs revealed by n-gram analysis. Scientific Reports 7, 12961}
 
   \end{frame}
-  
-  \begin{frame}{ranger: A Fast Implementation of Random Forests}
-
-\end{frame}
 
 
     \begin{frame}{Standard simplified alphabet}
@@ -955,111 +1012,131 @@ A new functional amyloid produced by Methanospirillum sp. \citep{10.3389/fmicb.2
 
 \end{frame}
 
-\section{Other applications}
+\section{Shiny aplication}
 
-\begin{frame}{Signal peptides}
+\begin{frame}{AmyloGram web server}
 
-\begin{figure} 
-\includegraphics[width=0.75\textwidth]{static_figure/SP.eps}
-\end{figure}
-
-Signal peptides~\citep{hegde_surprising_2006}:
-        \begin{itemize}[<+->]
-          \item short (20-30 residuals) N-terminal protein fragments forming $\alpha$-helices,
-            \item they direct proteins to the intracellular matrix and then for secretion or cell compartiments,
-            \item very variable, but always containing three characteristic domains.
-        \end{itemize}
-\end{frame}
-
-
-
-%Peptydy sygnałowe rozpoczynają się naładowanym dodatnio n-regionem, po którym występuje hydrofobowy h-region i c-region zakończony miejscem cięcia rozpoznawanym przez peptydazę sygnałową. 
-
-  
-\begin{frame}{Signal peptides}  
-% Skład aminokwasowy peptydów sygnałowych u \textit{Plasmodium} sp. (do których należy m. in. zarodziec malarii) jest inny od składu peptydów sygnałowych dobrze poznanych eukariontów. 
-The aminoacid composition of signal peptides in \textit{Plasmodium} sp. (ex. \textit{Plasmodium malariae}, wchich causes malaria) is different from that of the signal peptides of well known eukaryotes. 
-<<echo = FALSE, message=FALSE,warning=FALSE,fig.height=3.5,results='asis'>>=
-plot_pca(pca_full)
-  #ggtitle("PCA częstości aminokwasów w peptydach sygnałowych")
-@  
-
-PCA aminoacid frequency.
-\end{frame}  
-
-\begin{frame}{signalHsmm}
-
-signalHsmm \citep{BurdukiewiczPredictionSignalPeptides2018}: use of hidden semi-Mark models and simplified aminoacid alphabets to predict signal peptides in \textit{Plasmodium} sp. proteins.
- 
-\begin{figure} 
-\includegraphics[width=0.75\textwidth]{static_figure/HSMMs.eps}
-\end{figure}
+\includegraphics[width=1.0\textwidth]{static_figure/shiny_amylogram1.png}
 
 \end{frame}
 
-\begin{frame}{Benchmark with other predictors}
+\begin{frame}{AmyloGram web server}
 
-\begin{table}[H]
-\centering
-\small
-\begin{tabular}{rllll}
-  \toprule
-Algorithm & Sensitivity & Specificity & MCC & AUC \\ 
-  \midrule
-signalP 4.1 (no tm) & 0.8235 & 
-0.9100 & 0.6872 & 
-0.8667 \\ 
-   \rowcolor[gray]{0.85}signalP 4.1 (tm) 
-& 0.6471 & 
-0.9431 & 0.6196 & 0.7951 \\ 
-  signalP 3.0 (NN) & 0.8824 
-& 0.9052 & 0.7220 & 
-0.8938 \\ 
-   \rowcolor[gray]{0.85}signalP 3.0 (HMM) 
- & 0.6275 & 
-0.9194 & 0.5553 & 0.7734 \\ 
-  PrediSi & 0.3333 & \textbf{0.9573} 
-& 0.3849 & 0.6453 
-\\ 
-   \rowcolor[gray]{0.85}Philius 
-& 0.6078 & 
-0.9336 & 0.5684 & 0.7707 \\ 
-  Phobius & 0.6471 & 0.9289 & 
-0.5895 & 0.7880 \\ 
-   \rowcolor[gray]{0.85}signalHsmm-2010 & \textbf{0.9804} & 0.8720 & \textbf{0.7409} & \textbf{0.9262} \\ 
-   \bottomrule
-\end{tabular}
-\end{table}
-
-\tiny Burdukiewicz, M., Sobczyk, P., Chilimoniuk, J., Gagat, P., and Mackiewicz, P. (2018). Prediction of Signal Peptides in Proteins from Malaria Parasites. International Journal of Molecular Sciences 19, 3709.
+\includegraphics[width=1.0\textwidth]{static_figure/shiny_amylogram2.png}
 
 \end{frame}
 
+\begin{frame}{AmyloGram web server}
 
-\begin{frame}{Methanogram: predicting methanogens \mbox{culturing} conditions}
-
-% Metanogeny to złożona grupa archebakterii produkujących metan o zróżnicowanych wymaganiach hodowlanych. Methanogram umożliwia przewidywanie warunków hodowlanych metanogenów na podstawie ich informacji genetycznej.
-Methanogens are a complex group of archaeobacteria producing methane with different culturing requirements. A methanogram allows the prediction of the culturing conditions of a methanogens based on its genetic information.
-
-\begin{figure} 
-\includegraphics[width=0.58\textwidth]{static_figure/methanogens.jpg}
-\end{figure}
-
-\footnotesize
-Metanogeny. Maryland Astrobiology Consortium, NASA, and STScI.
+\includegraphics[width=1.0\textwidth]{static_figure/shiny_amylogram3.png}
 
 \end{frame}
 
-
-\begin{frame}{Methanogram: predicting methanogens \mbox{culturing} conditions}
-
-\begin{figure} 
-\includegraphics[width=0.62\textwidth]{static_figure/Figure2.eps}
-\end{figure}
-
-\tiny{Burdukiewicz, M., Gagat, P., Jabłoński, S., Chilimoniuk, J., Gaworski, M., Mackiewicz, P., and Łukaszewicz, M. (2018). PhyMet2: a database and toolkit for phylogenetic and metabolic analyses of methanogens. Environmental Microbiology Reports 10, 378–382.}
-
-\end{frame}
+% \section{Other applications}
+% 
+% \begin{frame}{Signal peptides}
+% 
+% \begin{figure} 
+% \includegraphics[width=0.75\textwidth]{static_figure/SP.eps}
+% \end{figure}
+% 
+% Signal peptides~\citep{hegde_surprising_2006}:
+%         \begin{itemize}[<+->]
+%           \item short (20-30 residuals) N-terminal protein fragments forming $\alpha$-helices,
+%             \item they direct proteins to the intracellular matrix and then for secretion or cell compartiments,
+%             \item very variable, but always containing three characteristic domains.
+%         \end{itemize}
+% \end{frame}
+% 
+% 
+% 
+% %Peptydy sygnałowe rozpoczynają się naładowanym dodatnio n-regionem, po którym występuje hydrofobowy h-region i c-region zakończony miejscem cięcia rozpoznawanym przez peptydazę sygnałową. 
+% 
+%   
+% \begin{frame}{Signal peptides}  
+% % Skład aminokwasowy peptydów sygnałowych u \textit{Plasmodium} sp. (do których należy m. in. zarodziec malarii) jest inny od składu peptydów sygnałowych dobrze poznanych eukariontów. 
+% The aminoacid composition of signal peptides in \textit{Plasmodium} sp. (ex. \textit{Plasmodium malariae}, wchich causes malaria) is different from that of the signal peptides of well known eukaryotes. 
+% <<echo = FALSE, message=FALSE,warning=FALSE,fig.height=3.5,results='asis'>>=
+% plot_pca(pca_full)
+%   #ggtitle("PCA częstości aminokwasów w peptydach sygnałowych")
+% @  
+% 
+% PCA aminoacid frequency.
+% \end{frame}  
+% 
+% \begin{frame}{signalHsmm}
+% 
+% signalHsmm \citep{BurdukiewiczPredictionSignalPeptides2018}: use of hidden semi-Mark models and simplified aminoacid alphabets to predict signal peptides in \textit{Plasmodium} sp. proteins.
+%  
+% \begin{figure} 
+% \includegraphics[width=0.75\textwidth]{static_figure/HSMMs.eps}
+% \end{figure}
+% 
+% \end{frame}
+% 
+% \begin{frame}{Benchmark with other predictors}
+% 
+% \begin{table}[H]
+% \centering
+% \small
+% \begin{tabular}{rllll}
+%   \toprule
+% Algorithm & Sensitivity & Specificity & MCC & AUC \\ 
+%   \midrule
+% signalP 4.1 (no tm) & 0.8235 & 
+% 0.9100 & 0.6872 & 
+% 0.8667 \\ 
+%    \rowcolor[gray]{0.85}signalP 4.1 (tm) 
+% & 0.6471 & 
+% 0.9431 & 0.6196 & 0.7951 \\ 
+%   signalP 3.0 (NN) & 0.8824 
+% & 0.9052 & 0.7220 & 
+% 0.8938 \\ 
+%    \rowcolor[gray]{0.85}signalP 3.0 (HMM) 
+%  & 0.6275 & 
+% 0.9194 & 0.5553 & 0.7734 \\ 
+%   PrediSi & 0.3333 & \textbf{0.9573} 
+% & 0.3849 & 0.6453 
+% \\ 
+%    \rowcolor[gray]{0.85}Philius 
+% & 0.6078 & 
+% 0.9336 & 0.5684 & 0.7707 \\ 
+%   Phobius & 0.6471 & 0.9289 & 
+% 0.5895 & 0.7880 \\ 
+%    \rowcolor[gray]{0.85}signalHsmm-2010 & \textbf{0.9804} & 0.8720 & \textbf{0.7409} & \textbf{0.9262} \\ 
+%    \bottomrule
+% \end{tabular}
+% \end{table}
+% 
+% \tiny Burdukiewicz, M., Sobczyk, P., Chilimoniuk, J., Gagat, P., and Mackiewicz, P. (2018). Prediction of Signal Peptides in Proteins from Malaria Parasites. International Journal of Molecular Sciences 19, 3709.
+% 
+% \end{frame}
+% 
+% 
+% \begin{frame}{Methanogram: predicting methanogens \mbox{culturing} conditions}
+% 
+% % Metanogeny to złożona grupa archebakterii produkujących metan o zróżnicowanych wymaganiach hodowlanych. Methanogram umożliwia przewidywanie warunków hodowlanych metanogenów na podstawie ich informacji genetycznej.
+% Methanogens are a complex group of archaeobacteria producing methane with different culturing requirements. A methanogram allows the prediction of the culturing conditions of a methanogens based on its genetic information.
+% 
+% \begin{figure} 
+% \includegraphics[width=0.58\textwidth]{static_figure/methanogens.jpg}
+% \end{figure}
+% 
+% \footnotesize
+% Metanogeny. Maryland Astrobiology Consortium, NASA, and STScI.
+% 
+% \end{frame}
+% 
+% 
+% \begin{frame}{Methanogram: predicting methanogens \mbox{culturing} conditions}
+% 
+% \begin{figure} 
+% \includegraphics[width=0.62\textwidth]{static_figure/Figure2.eps}
+% \end{figure}
+% 
+% \tiny{Burdukiewicz, M., Gagat, P., Jabłoński, S., Chilimoniuk, J., Gaworski, M., Mackiewicz, P., and Łukaszewicz, M. (2018). PhyMet2: a database and toolkit for phylogenetic and metabolic analyses of methanogens. Environmental Microbiology Reports 10, 378–382.}
+% 
+% \end{frame}
 
 
 
@@ -1074,19 +1151,19 @@ Metanogeny. Maryland Astrobiology Consortium, NASA, and STScI.
 
 \begin{frame}{Summarise()}
 
-Webservers:
+Web servers:
 \begin{itemize}
 \item \textbf{AmyloGram}: \url{http://www.smorfland.uni.wroc.pl/shiny/AmyloGram/}.
-\item \textbf{MethanoGram}: \url{http://www.smorfland.uni.wroc.pl/shiny/MethanoGram/}.
-\item \textbf{signalHsmm}: \url{http://www.smorfland.uni.wroc.pl/shiny/signalHsmm/}.
+% \item \textbf{MethanoGram}: \url{http://www.smorfland.uni.wroc.pl/shiny/MethanoGram/}.
+% \item \textbf{signalHsmm}: \url{http://www.smorfland.uni.wroc.pl/shiny/signalHsmm/}.
 \end{itemize}
 
 
-Pakiety \textbf{R}:
+\textbf{R} packages:
 \begin{itemize}
-\item \textbf{biogram}: \url{https://cran.r-project.org/package=biogram}.
 \item \textbf{AmyloGram}: \url{https://cran.r-project.org/package=AmyloGram}.
-\item \textbf{signalHsmm}: \url{https://cran.r-project.org/package=signalHsmm}.
+\item \textbf{biogram}: \url{https://cran.r-project.org/package=biogram}.
+% \item \textbf{signalHsmm}: \url{https://cran.r-project.org/package=signalHsmm}.
 \end{itemize}
 \end{frame}  
 
