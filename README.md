@@ -1,9 +1,7 @@
-## SatRday_2019
+## WhyR?_2019
 
 Presentation
 
-AmyloGram: Analysis of proteins in R
+AmyloGram: the R package and a Shiny server for amyloid prediction
 
-SatRday in Gdańsk
-
-17 – 18 May 2019 • Gdańsk, Poland
+26 – 30 September 2019 • Warszawa, Poland
